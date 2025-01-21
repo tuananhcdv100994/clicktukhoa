@@ -11,11 +11,20 @@ def search_and_click(keyword):
         # Truy cập Google
         page.goto("https://www.google.com")
         
-        # Chờ selector xuất hiện
+        # Chờ selector xuất hiện và kiểm tra sự tương tác của phần tử
         try:
-            page.wait_for_selector("input[name=q]", timeout=60000)  # Đợi 60 giây
+            # Tăng timeout lên 120 giây và kiểm tra phần tử có sẵn để tương tác
+            page.wait_for_selector("input[name=q]", timeout=120000)  # Đợi tối đa 120 giây
+            
+            # Đảm bảo input có thể nhìn thấy và có thể tương tác
+            page.wait_for_function('document.querySelector("input[name=q]").offsetHeight > 0')
+            
             page.fill("input[name=q]", keyword)  # Điền từ khóa
             page.keyboard.press("Enter")  # Nhấn Enter
+
+            # Chờ trang tải xong (chờ điều hướng nếu có)
+            page.wait_for_navigation(timeout=60000)
+
             time.sleep(3)  # Đợi kết quả tải
 
             # Click vào kết quả đầu tiên
